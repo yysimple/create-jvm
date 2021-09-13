@@ -13,6 +13,8 @@ type Cmd struct {
 	versionFlag bool
 	// 指令选项
 	cpOption string
+	// Java虚拟机将使用JDK的启动类路径来寻找和加载Java标准库中的类，所以这里是指定jre目录的位置
+	XjreOption string
 	// 需要处理的类
 	class string
 	// 参数
@@ -28,6 +30,7 @@ func parseCmd() *Cmd {
 	flag.BoolVar(&cmd.versionFlag, "version", false, "print version and exit")
 	flag.StringVar(&cmd.cpOption, "classpath", "", "classpath")
 	flag.StringVar(&cmd.cpOption, "cp", "", "classpath")
+	flag.StringVar(&cmd.XjreOption, "Xjre", "", "path to jre")
 	flag.Parse()
 
 	args := flag.Args()
