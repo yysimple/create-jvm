@@ -15,6 +15,9 @@ type Classpath struct {
 func Parse(jreOption, cpOption string) *Classpath {
 	cp := &Classpath{}
 	cp.parseBootAndExtClasspath(jreOption)
+	// 如果是用户自己去指定加载的路径
+	// 需要这样传：create-jvm.exe -Xjre D:\java\jdk\jre  -classpath D:\golang\source\bin\create-jvm\bin\java\ Demo
+	// 或者不需要自己指定 jre 环境，会自动去系统变量中获取 ：create-jvm.exe -classpath D:\golang\source\bin\create-jvm\bin\java\ Demo
 	cp.parseUserClasspath(cpOption)
 	return cp
 }

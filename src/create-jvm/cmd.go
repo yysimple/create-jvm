@@ -28,8 +28,8 @@ func parseCmd() *Cmd {
 	flag.BoolVar(&cmd.helpFlag, "help", false, "print help message")
 	flag.BoolVar(&cmd.helpFlag, "?", false, "print help message")
 	flag.BoolVar(&cmd.versionFlag, "version", false, "print version and exit")
-	flag.StringVar(&cmd.cpOption, "classpath", "", "classpath")
-	flag.StringVar(&cmd.cpOption, "cp", "", "classpath")
+	flag.StringVar(&cmd.cpOption, "classpath", "", "path to classpath")
+	flag.StringVar(&cmd.cpOption, "cp", "", "path to classpath")
 	flag.StringVar(&cmd.XjreOption, "Xjre", "", "path to jre")
 	flag.Parse()
 
