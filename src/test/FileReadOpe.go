@@ -22,9 +22,17 @@ func readUint32(data []byte) []byte {
 }
 
 func readInt8() {
-	code := []byte{0x0A, 0x0F}
-	b := code[0]
-	fmt.Println("b: ", b)
-	i := int8(b)
-	fmt.Println("i: ", i)
+	// 00001010  00001111
+	code := []byte{uint8(10), uint8(15)}
+	ub := code[0]
+	uc := code[1]
+	fmt.Println("ub: ", ub)
+	b := int8(ub)
+	c := int8(uc)
+	fmt.Println("test b | c: ", b<<8-c)
+	b16 := uint16(ub)
+	c16 := uint16(uc)
+	fmt.Println("b16: ", b16, ", c16: ", c16)
+	fmt.Println("test: ", b16<<8|c16)
+	fmt.Println("int test: ", int16(2575))
 }
