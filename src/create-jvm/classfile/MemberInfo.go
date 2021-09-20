@@ -67,7 +67,7 @@ func (self *MemberInfo) AccessFlags() uint16 {
 	return self.accessFlags
 }
 
-// Name // 这里是勇敢 cp （符号引用），指向常量池表中的位置，可以得到对应的name（比如一个方法，add(),然后这个指向的就是 add字符串 ）
+// Name //  cp （符号引用），指向常量池表中的位置，可以得到对应的name（比如一个方法，add(),然后这个指向的就是 add字符串 ）
 func (self *MemberInfo) Name() string {
 	return self.cp.getUtf8(self.nameIndex)
 }
@@ -75,4 +75,15 @@ func (self *MemberInfo) Name() string {
 // Descriptor // 这个就是对应的常量池里面返回值的描述，比如 void add1()；那么这个描述在常量池中对应位置处，是 ()V 这写字符串
 func (self *MemberInfo) Descriptor() string {
 	return self.cp.getUtf8(self.descriptorIndex)
+}
+
+// CodeAttribute 获取方法里的code属性
+func (self *MemberInfo) CodeAttribute() *CodeAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *CodeAttribute:
+			return attrInfo.(*CodeAttribute)
+		}
+	}
+	return nil
 }

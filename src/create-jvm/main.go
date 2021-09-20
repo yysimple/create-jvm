@@ -5,6 +5,7 @@ import (
 	"create-jvm/classpath"
 	"create-jvm/rtda"
 	"fmt"
+	"strings"
 )
 
 func main() {
@@ -20,19 +21,36 @@ func main() {
 }
 
 // 启动vm去加载类
-/*func startJVM(cmd *Cmd) {
+func startJVM(cmd *Cmd) {
 	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
 	className := strings.Replace(cmd.class, ".", "/", -1)
-	cf := loadClass(className, cp)
-	fmt.Println(cmd.class)
-	printClassInfo(cf)
-}*/
+	classFile := loadClass(className, cp)
+	// 从classFile中找到对应的方法表里面的属性表code里面的 main方法
+	mainMethod := getMainMethod(classFile)
+	if mainMethod != nil {
+		interpret(mainMethod)
+	} else {
+		fmt.Printf("Main method not found in class %s\n", cmd.class)
+	}
+}
 
 // startJVM // 测试指令
-func startJVM(cmd *Cmd) {
+/*func startJVM(cmd *Cmd) {
 	frame := rtda.NewFrame(100, 100)
 	testLocalVars(frame.LocalVars())
 	testOperandStack(frame.OperandStack())
+}*/
+
+/**
+获取main方法
+*/
+func getMainMethod(classFile *classfile.ClassFile) *classfile.MemberInfo {
+	for _, m := range classFile.Methods() {
+		if m.Name() == "main" && m.Descriptor() == "([Ljava/lang/String;)V" {
+			return m
+		}
+	}
+	return nil
 }
 
 /**
@@ -46,12 +64,12 @@ func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {
 	}
 
 	// 这里就是解析过程
-	cf, err := classfile.Parse(classData)
+	classFile, err := classfile.Parse(classData)
 	if err != nil {
 		panic(err)
 	}
 
-	return cf
+	return classFile
 }
 
 /**

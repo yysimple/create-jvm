@@ -22,6 +22,15 @@ func NewFrame(maxLocals, maxStack uint) *Frame {
 	}
 }
 
+// newFrame // 这里的话是再初始化的时候，指定是哪个线程
+func newFrame(thread *Thread, maxLocals, maxStack uint) *Frame {
+	return &Frame{
+		thread:       thread,
+		localVars:    newLocalVars(maxLocals),
+		operandStack: newOperandStack(maxStack),
+	}
+}
+
 // LocalVars // get set
 func (self *Frame) LocalVars() LocalVars {
 	return self.localVars
