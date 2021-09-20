@@ -13,6 +13,7 @@ constantPool字段存放运行时常量池指针，fields和methods字段分别�
 
 //Class // name, superClassName and interfaceNames are all binary names(jvms8-4.2.1)
 // https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.2.1
+// 我们也可以叫做他为类元信息，就是一个类的描述信息
 type Class struct {
 	accessFlags       uint16
 	name              string // thisClassName

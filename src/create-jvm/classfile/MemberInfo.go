@@ -55,9 +55,9 @@ func readMember(reader *ClassReader, cp ConstantPool) *MemberInfo {
 		accessFlags: reader.readUint16(),
 		// 名称索引，两个字节
 		nameIndex: reader.readUint16(),
-		// 方法描述，对应的是返回值类型，两个字节
+		// 字段/方法描述，对应的是返回值类型，两个字节
 		descriptorIndex: reader.readUint16(),
-		// 方法表里面的属性
+		// 字段表/方法表里面的属性
 		attributes: readAttributes(reader, cp),
 	}
 }
@@ -83,6 +83,17 @@ func (self *MemberInfo) CodeAttribute() *CodeAttribute {
 		switch attrInfo.(type) {
 		case *CodeAttribute:
 			return attrInfo.(*CodeAttribute)
+		}
+	}
+	return nil
+}
+
+// ConstantValueAttribute // 这里是获取常量表达式的值
+func (self *MemberInfo) ConstantValueAttribute() *ConstantValueAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *ConstantValueAttribute:
+			return attrInfo.(*ConstantValueAttribute)
 		}
 	}
 	return nil
