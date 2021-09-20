@@ -1,5 +1,9 @@
 package base
 
+/**
+指令的详细用法参考我的文章：https://www.wolai.com/ax9WjQNCUaKPqeNtLWf5fH
+*/
+
 type BytecodeReader struct {
 	// 这里是读取到的字节码指令
 	code []byte // bytecodes

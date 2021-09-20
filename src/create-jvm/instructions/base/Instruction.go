@@ -3,6 +3,10 @@ package base
 import "create-jvm/rtda"
 
 /**
+指令的详细用法参考我的文章：https://www.wolai.com/ax9WjQNCUaKPqeNtLWf5fH
+*/
+
+/**
 这里看个逻辑：
 	do{
 	  自动计算PC寄存器的值加1；
