@@ -8,7 +8,10 @@ type Frame struct {
 	localVars LocalVars
 	// 操作数栈
 	operandStack *OperandStack
-	// todo
+	// 当前线程
+	thread *Thread
+	// the next instruction after the call
+	nextPC int
 }
 
 // NewFrame // 新建栈帧操作，初始化
@@ -25,4 +28,14 @@ func (self *Frame) LocalVars() LocalVars {
 }
 func (self *Frame) OperandStack() *OperandStack {
 	return self.operandStack
+}
+
+func (self *Frame) Thread() *Thread {
+	return self.thread
+}
+func (self *Frame) NextPC() int {
+	return self.nextPC
+}
+func (self *Frame) SetNextPC(nextPC int) {
+	self.nextPC = nextPC
 }
