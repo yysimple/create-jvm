@@ -8,7 +8,7 @@ type ClassRef struct {
 }
 
 // newClassRef 从常量池的类信息表里拿到类名
-func newClassRef(cp *ConstantPool, classInfo *classfile.ConstantClassInfo) *ClassRef {
+func newClassRef(cp *RtConstantPool, classInfo *classfile.ConstantClassInfo) *ClassRef {
 	ref := &ClassRef{}
 	ref.cp = cp
 	// 拿到类信息的名称

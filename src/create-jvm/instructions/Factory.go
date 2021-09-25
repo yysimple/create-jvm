@@ -533,10 +533,10 @@ func NewInstruction(opcode byte) base.Instruction {
 		return &references.GET_FIELD{}
 	case 0xb5:
 		return &references.PUT_FIELD{}
-		//	case 0xb6:
-		//		return &INVOKE_VIRTUAL{}
-		// case 0xb7:
-		// 	return &INVOKE_SPECIAL{}
+	case 0xb6:
+		return &references.INVOKE_VIRTUAL{}
+	case 0xb7:
+		return &references.INVOKE_SPECIAL{}
 		// case 0xb8:
 		// 	return &INVOKE_STATIC{}
 		// case 0xb9:
