@@ -4,6 +4,7 @@ import (
 	"create-jvm/classfile"
 	"create-jvm/classpath"
 	"create-jvm/rtda"
+	"create-jvm/rtda/heap"
 	"fmt"
 	"strings"
 )
@@ -20,19 +21,34 @@ func main() {
 	}
 }
 
-// 启动vm去加载类
 func startJVM(cmd *Cmd) {
 	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
+	// 初始化一个类加载器
+	classLoader := heap.NewClassLoader(cp)
+
 	className := strings.Replace(cmd.class, ".", "/", -1)
-	classFile := loadClass(className, cp)
-	// 从classFile中找到对应的方法表里面的属性表code里面的 main方法
-	mainMethod := getMainMethod(classFile)
+	mainClass := classLoader.LoadClass(className)
+	mainMethod := mainClass.GetMainMethod()
 	if mainMethod != nil {
 		interpret(mainMethod)
 	} else {
 		fmt.Printf("Main method not found in class %s\n", cmd.class)
 	}
 }
+
+// 启动jvm去加载类
+//func startJVM(cmd *Cmd) {
+//	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
+//	className := strings.Replace(cmd.class, ".", "/", -1)
+//	classFile := loadClass(className, cp)
+//	// 从classFile中找到对应的方法表里面的属性表code里面的 main方法
+//	mainMethod := getMainMethod(classFile)
+//	if mainMethod != nil {
+//		interpret(mainMethod)
+//	} else {
+//		fmt.Printf("Main method not found in class %s\n", cmd.class)
+//	}
+//}
 
 // startJVM // 测试指令
 /*func startJVM(cmd *Cmd) {

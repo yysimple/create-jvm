@@ -1,5 +1,7 @@
 package rtda
 
+import "create-jvm/rtda/heap"
+
 /*
 JVM
 // 虚拟机栈是线程私有的，所以每个线程都会为自己创建一个私有的栈
@@ -56,6 +58,10 @@ func (self *Thread) CurrentFrame() *Frame {
 	return self.stack.top()
 }
 
-func (self *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
-	return newFrame(self, maxLocals, maxStack)
+//func (self *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
+//	return newFrame(self, maxLocals, maxStack)
+//}
+
+func (self *Thread) NewFrame(method *heap.Method) *Frame {
+	return newFrame(self, method)
 }

@@ -1,25 +1,34 @@
 package main
 
 import (
-	"create-jvm/classfile"
 	"create-jvm/instructions"
 	"create-jvm/instructions/base"
 	"create-jvm/rtda"
+	"create-jvm/rtda/heap"
 	"fmt"
 )
 
-func interpret(methodInfo *classfile.MemberInfo) {
-	codeAttr := methodInfo.CodeAttribute()
-	maxLocals := codeAttr.MaxLocals()
-	maxStack := codeAttr.MaxStack()
-	bytecode := codeAttr.Code()
+//func interpret(methodInfo *classfile.MemberInfo) {
+//	codeAttr := methodInfo.CodeAttribute()
+//	maxLocals := codeAttr.MaxLocals()
+//	maxStack := codeAttr.MaxStack()
+//	bytecode := codeAttr.Code()
+//
+//	thread := rtda.NewThread()
+//	frame := thread.NewFrame(maxLocals, maxStack)
+//	thread.PushFrame(frame)
+//
+//	defer catchErr(frame)
+//	loop(thread, bytecode)
+//}
 
+func interpret(method *heap.Method) {
 	thread := rtda.NewThread()
-	frame := thread.NewFrame(maxLocals, maxStack)
+	frame := thread.NewFrame(method)
 	thread.PushFrame(frame)
 
 	defer catchErr(frame)
-	loop(thread, bytecode)
+	loop(thread, method.Code())
 }
 
 func catchErr(frame *rtda.Frame) {
