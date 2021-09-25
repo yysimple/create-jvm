@@ -4,9 +4,11 @@ import "create-jvm/classfile"
 
 // Field // 字段信息，存放字段相关的信息，继承于 ClassMember
 type Field struct {
+	// 继承该类，有一些通用的信息
 	ClassMember
 	constValueIndex uint
-	slotId          uint
+	// 这里是为了记录该字段在slots中的索引位置
+	slotId uint
 }
 
 // newFields 新建一个字段信息
@@ -47,6 +49,8 @@ func (self *Field) ConstValueIndex() uint {
 func (self *Field) SlotId() uint {
 	return self.slotId
 }
+
+// 方法返回字段是否是long或double类型
 func (self *Field) isLongOrDouble() bool {
 	return self.descriptor == "J" || self.descriptor == "D"
 }

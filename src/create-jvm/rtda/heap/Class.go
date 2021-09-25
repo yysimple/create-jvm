@@ -15,19 +15,32 @@ constantPool字段存放运行时常量池指针，fields和methods字段分别�
 // https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.2.1
 // 我们也可以叫做他为类元信息，就是一个类的描述信息
 type Class struct {
-	accessFlags       uint16
-	name              string // thisClassName
-	superClassName    string
-	interfaceNames    []string
-	constantPool      *classfile.ConstantPool
-	fields            []*Field
-	methods           []*Method
-	loader            *ClassLoader
-	superClass        *Class
-	interfaces        []*Class
+	// 访问标识
+	accessFlags uint16
+	// 当前类名称
+	name string // thisClassName
+	// 父类名称
+	superClassName string
+	// 接口名称，多实现，所以可能存在多个
+	interfaceNames []string
+	// 将常量池的内容引入
+	constantPool *classfile.ConstantPool
+	// 字段信息,会存在多个字段
+	fields []*Field
+	// 方法信息，也同样会存在多个
+	methods []*Method
+	// 加载该类的类加载器
+	loader *ClassLoader
+	// 父类指针
+	superClass *Class
+	// 对应的接口
+	interfaces []*Class
+	// 实例变量占用插槽数量
 	instanceSlotCount uint
-	staticSlotCount   uint
-	staticVars        Slots
+	// 类变量占用的插槽数量
+	staticSlotCount uint
+	// 插槽数组，之后用于判断变量的位置信息
+	staticVars Slots
 }
 
 // newClass // 把ClassFile格式的数据转换成 class结构
