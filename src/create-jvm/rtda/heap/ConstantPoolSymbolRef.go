@@ -11,7 +11,7 @@ package heap
 // 方法符号引用的解析过程和字段符号引用类似。
 type SymbolRef struct {
 	// cp字段存放符号引用所在的运行时常量池指针，这样就可以通过符号引用访问到运行时常量池，进一步又可以访问到类数据
-	cp *ConstantPool
+	cp *RtConstantPool
 	// className字段存放类的完全限定名。
 	className string
 	// class字段缓存解析后的类结构体指针，这样类符号引用只需要解析一次就可以了，后续可以直接使用缓存值

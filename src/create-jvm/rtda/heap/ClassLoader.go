@@ -199,7 +199,7 @@ func allocAndInitStaticVars(class *Class) {
 // 为静态变量设置默认值，这里的初始化并不是显示初始化，真正进行显示初始化的时候是在 “初始化阶段”，而不是在准备阶段
 func initStaticFinalVar(class *Class, field *Field) {
 	vars := class.staticVars
-	cp := class.constantPool
+	cp := class.rtConstantPool
 	// 获取字段的定长属性
 	cpIndex := field.ConstValueIndex()
 	// 获取字段对应的插槽id

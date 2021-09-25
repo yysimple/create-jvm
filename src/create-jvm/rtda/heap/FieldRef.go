@@ -16,7 +16,7 @@ type FieldRef struct {
 */
 
 // 实例化字段引用
-func newFieldRef(cp *ConstantPool, refInfo *classfile.ConstantFieldRefInfo) *FieldRef {
+func newFieldRef(cp *RtConstantPool, refInfo *classfile.ConstantFieldRefInfo) *FieldRef {
 	ref := &FieldRef{}
 	ref.cp = cp
 	ref.copyMemberRefInfo(&refInfo.ConstantMemberRefInfo)
