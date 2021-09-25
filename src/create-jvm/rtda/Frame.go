@@ -1,5 +1,7 @@
 package rtda
 
+import "create-jvm/rtda/heap"
+
 // Frame // 栈帧
 type Frame struct {
 	// 这里其实就是维护一个链表，指向下一个节点的指针
@@ -10,6 +12,8 @@ type Frame struct {
 	operandStack *OperandStack
 	// 当前线程
 	thread *Thread
+	// 放入方法信息
+	method *heap.Method
 	// the next instruction after the call
 	nextPC int
 }
@@ -42,6 +46,11 @@ func (self *Frame) OperandStack() *OperandStack {
 func (self *Frame) Thread() *Thread {
 	return self.thread
 }
+
+func (self *Frame) Method() *heap.Method {
+	return self.method
+}
+
 func (self *Frame) NextPC() int {
 	return self.nextPC
 }

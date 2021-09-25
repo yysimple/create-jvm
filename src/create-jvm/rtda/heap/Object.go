@@ -12,6 +12,16 @@ type Object struct {
 	fields Slots
 }
 
+/**
+新创建一个对象
+*/
+func newObject(class *Class) *Object {
+	return &Object{
+		class:  class,
+		fields: newSlots(class.instanceSlotCount),
+	}
+}
+
 // getters
 func (self *Object) Class() *Class {
 	return self.class

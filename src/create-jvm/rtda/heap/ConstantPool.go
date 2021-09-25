@@ -13,17 +13,17 @@ import (
 
 type Constant interface{}
 
-// ConstantPool  这里是运行时常量池
-type ConstantPool struct {
+// RtConstantPool  这里是运行时常量池
+type RtConstantPool struct {
 	class  *Class
 	consts []Constant
 }
 
 // 将classFile中的常量转换成运行时常量池中的常量
-func newConstantPool(class *Class, cfCp classfile.ConstantPool) *ConstantPool {
+func newConstantPool(class *Class, cfCp classfile.ConstantPool) *RtConstantPool {
 	cpCount := len(cfCp)
 	consts := make([]Constant, cpCount)
-	rtCp := &ConstantPool{class, consts}
+	rtCp := &RtConstantPool{class, consts}
 
 	// 争对不同常量进行转换
 	for i := 1; i < cpCount; i++ {
@@ -67,7 +67,7 @@ func newConstantPool(class *Class, cfCp classfile.ConstantPool) *ConstantPool {
 }
 
 //GetConstant 根据索引返回常量
-func (self *ConstantPool) GetConstant(index uint) Constant {
+func (self *RtConstantPool) GetConstant(index uint) Constant {
 	if c := self.consts[index]; c != nil {
 		return c
 	}

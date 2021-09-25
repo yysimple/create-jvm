@@ -24,7 +24,7 @@ type Class struct {
 	// 接口名称，多实现，所以可能存在多个
 	interfaceNames []string
 	// 将常量池的内容引入
-	constantPool *classfile.ConstantPool
+	constantPool *RtConstantPool
 	// 字段信息,会存在多个字段
 	fields []*Field
 	// 方法信息，也同样会存在多个
@@ -86,7 +86,7 @@ func (self *Class) IsEnum() bool {
 }
 
 // getters
-func (self *Class) ConstantPool() *ConstantPool {
+func (self *Class) ConstantPool() *RtConstantPool {
 	return self.constantPool
 }
 func (self *Class) StaticVars() Slots {
