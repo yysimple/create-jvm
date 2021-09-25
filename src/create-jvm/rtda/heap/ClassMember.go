@@ -47,7 +47,9 @@ func (self *ClassMember) Class() *Class {
 	return self.class
 }
 
-// jvms 5.4.4
+// 用通俗的语言描述字段访问规则。如果字段是public，则任何类都可以访问。如果字段是protected，则只有子类和同一个包下的类可以访问。
+// 如果字段有默认访问权限（非public，非protected，也非privated），则只有同一个包下的类可以访问。否则，字段是private，只有声明这个字段的类才能访问。
+// 放在这里时因为方法引用到时候也差不多
 func (self *ClassMember) isAccessibleTo(d *Class) bool {
 	if self.IsPublic() {
 		return true

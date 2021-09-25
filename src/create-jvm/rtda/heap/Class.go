@@ -99,13 +99,16 @@ func (self *Class) isAccessibleTo(other *Class) bool {
 		self.getPackageName() == other.getPackageName()
 }
 
+// 获取包名
 func (self *Class) getPackageName() string {
+	// 这里拿到最后一个名字
 	if i := strings.LastIndex(self.name, "/"); i >= 0 {
 		return self.name[:i]
 	}
 	return ""
 }
 
+//GetMainMethod //  获取到方法对象
 func (self *Class) GetMainMethod() *Method {
 	return self.getStaticMethod("main", "([Ljava/lang/String;)V")
 }

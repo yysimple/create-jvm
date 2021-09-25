@@ -225,6 +225,7 @@ func initStaticFinalVar(class *Class, field *Field) {
 	}
 }
 
+//
 func resolution() {
 
 }

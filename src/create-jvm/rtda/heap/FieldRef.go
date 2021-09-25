@@ -23,6 +23,7 @@ func newFieldRef(cp *ConstantPool, refInfo *classfile.ConstantFieldRefInfo) *Fie
 	return ref
 }
 
+// ResolvedField //解析字段引用
 func (self *FieldRef) ResolvedField() *Field {
 	if self.field == nil {
 		self.resolveFieldRef()
@@ -30,10 +31,12 @@ func (self *FieldRef) ResolvedField() *Field {
 	return self.field
 }
 
-// jvms 5.4.3.2
+// 字段的符号引用解析成直接引用
 func (self *FieldRef) resolveFieldRef() {
 	d := self.cp.class
+	// 这里依旧先拿到 类 c，然后在进行下一步操作
 	c := self.ResolvedClass()
+	// 解析字段引用
 	field := lookupField(c, self.name, self.descriptor)
 
 	if field == nil {
@@ -46,6 +49,10 @@ func (self *FieldRef) resolveFieldRef() {
 	self.field = field
 }
 
+/**
+如果类D想通过字段符号引用访问类C的某个字段，首先要解析符号引用得到类C，然后根据字段名和描述符查找字段。
+如果字段查找失败，则虚拟机抛出NoSuchFieldError异常。如果查找成功，但D没有足够的权限访问该字段，则虚拟机抛出IllegalAccessError异常。
+*/
 func lookupField(c *Class, name, descriptor string) *Field {
 	for _, field := range c.fields {
 		if field.name == name && field.descriptor == descriptor {
@@ -53,12 +60,14 @@ func lookupField(c *Class, name, descriptor string) *Field {
 		}
 	}
 
+	// 从接口中找
 	for _, iface := range c.interfaces {
 		if field := lookupField(iface, name, descriptor); field != nil {
 			return field
 		}
 	}
 
+	// 从父类中找
 	if c.superClass != nil {
 		return lookupField(c.superClass, name, descriptor)
 	}
