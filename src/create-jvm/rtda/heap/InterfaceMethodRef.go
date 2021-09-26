@@ -22,8 +22,32 @@ func (self *InterfaceMethodRef) ResolvedInterfaceMethod() *Method {
 	return self.method
 }
 
-// jvms8 5.4.3.4
+// 这跟前面的实例方法的解析差不多
 func (self *InterfaceMethodRef) resolveInterfaceMethodRef() {
-	//class := self.ResolveClass()
-	// todo
+	d := self.cp.class
+	c := self.ResolvedClass()
+	if !c.IsInterface() {
+		panic("java.lang.IncompatibleClassChangeError")
+	}
+
+	method := lookupInterfaceMethod(c, self.name, self.descriptor)
+	if method == nil {
+		panic("java.lang.NoSuchMethodError")
+	}
+	if !method.isAccessibleTo(d) {
+		panic("java.lang.IllegalAccessError")
+	}
+
+	self.method = method
+}
+
+// 这里只要去解析接口就行了
+func lookupInterfaceMethod(iface *Class, name, descriptor string) *Method {
+	for _, method := range iface.methods {
+		if method.name == name && method.descriptor == descriptor {
+			return method
+		}
+	}
+
+	return lookupMethodInInterfaces(iface.interfaces, name, descriptor)
 }
