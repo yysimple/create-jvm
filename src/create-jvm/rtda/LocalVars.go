@@ -15,6 +15,11 @@ func newLocalVars(maxLocals uint) LocalVars {
 	return nil
 }
 
+// SetSlot 将插槽存入到局部变量表中
+func (self LocalVars) SetSlot(index uint, slot Slot) {
+	self[index] = slot
+}
+
 func (self LocalVars) SetInt(index uint, val int32) {
 	self[index].num = val
 }

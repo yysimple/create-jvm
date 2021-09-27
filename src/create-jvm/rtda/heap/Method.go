@@ -10,6 +10,8 @@ type Method struct {
 	maxLocals uint
 	// 字节码指令操作
 	code []byte
+	// 记录该方法有多少个参数
+	argSlotCount uint
 }
 
 // 初始化一个方法信息，也是从classFile转换过来
@@ -20,8 +22,23 @@ func newMethods(class *Class, classFileMethods []*classfile.MemberInfo) []*Metho
 		methods[i].class = class
 		methods[i].copyMemberInfo(classFileMethod)
 		methods[i].copyAttributes(classFileMethod)
+		methods[i].calcArgSlotCount()
 	}
 	return methods
+}
+
+// 这里是去解析方法中的参数占用插槽的个数
+func (self *Method) calcArgSlotCount() {
+	parsedDescriptor := parseMethodDescriptor(self.descriptor)
+	for _, paramType := range parsedDescriptor.parameterTypes {
+		self.argSlotCount++
+		if paramType == "J" || paramType == "D" {
+			self.argSlotCount++
+		}
+	}
+	if !self.IsStatic() {
+		self.argSlotCount++ // `this` reference
+	}
 }
 
 // 转换属性信息
@@ -61,4 +78,8 @@ func (self *Method) MaxLocals() uint {
 }
 func (self *Method) Code() []byte {
 	return self.code
+}
+
+func (self *Method) ArgSlotCount() uint {
+	return self.argSlotCount
 }

@@ -41,6 +41,8 @@ type Class struct {
 	staticSlotCount uint
 	// 插槽数组，之后用于判断变量的位置信息
 	staticVars Slots
+
+	initStarted bool
 }
 
 // newClass // 把ClassFile格式的数据转换成 class结构
@@ -127,4 +129,25 @@ func (self *Class) getStaticMethod(name, descriptor string) *Method {
 
 func (self *Class) NewObject() *Object {
 	return newObject(self)
+}
+
+// getters
+func (self *Class) Name() string {
+	return self.name
+}
+func (self *Class) Fields() []*Field {
+	return self.fields
+}
+func (self *Class) Methods() []*Method {
+	return self.methods
+}
+func (self *Class) SuperClass() *Class {
+	return self.superClass
+}
+func (self *Class) InitStarted() bool {
+	return self.initStarted
+}
+
+func (self *Class) StartInit() {
+	self.initStarted = true
 }
