@@ -21,6 +21,8 @@ func newOperandStack(maxStack uint) *OperandStack {
 	return nil
 }
 
+// PushInt 这里是将新的元素入栈，然后临时增加操作数的大小，最后 ++ 是为下一个元素预留的空间
+// 所以再取slot里面的数据的时候，应该先对应的 -- 在取读出来
 func (self *OperandStack) PushInt(val int32) {
 	self.slots[self.size].num = val
 	self.size++
@@ -68,6 +70,8 @@ func (self *OperandStack) PushRef(ref *heap.Object) {
 	self.slots[self.size].ref = ref
 	self.size++
 }
+
+// PopRef 对象引用的情况下，需要将对象的引用置为空，让GC回收
 func (self *OperandStack) PopRef() *heap.Object {
 	self.size--
 	ref := self.slots[self.size].ref

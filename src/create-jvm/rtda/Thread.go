@@ -53,6 +53,11 @@ func (self *Thread) PopFrame() *Frame {
 	return self.stack.pop()
 }
 
+// TopFrame // 拿出栈顶元素
+func (self *Thread) TopFrame() *Frame {
+	return self.stack.top()
+}
+
 // CurrentFrame CurrentFrame
 func (self *Thread) CurrentFrame() *Frame {
 	return self.stack.top()
