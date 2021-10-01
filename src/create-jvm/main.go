@@ -23,18 +23,32 @@ func main() {
 
 func startJVM(cmd *Cmd) {
 	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
-	// 初始化一个类加载器
-	classLoader := heap.NewClassLoader(cp)
+	classLoader := heap.NewClassLoader(cp, cmd.verboseClassFlag)
 
 	className := strings.Replace(cmd.class, ".", "/", -1)
 	mainClass := classLoader.LoadClass(className)
 	mainMethod := mainClass.GetMainMethod()
 	if mainMethod != nil {
-		interpret(mainMethod)
+		interpret(mainMethod, cmd.verboseInstFlag)
 	} else {
 		fmt.Printf("Main method not found in class %s\n", cmd.class)
 	}
 }
+
+//func startJVM(cmd *Cmd) {
+//	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
+//	// 初始化一个类加载器
+//	classLoader := heap.NewClassLoader(cp)
+//
+//	className := strings.Replace(cmd.class, ".", "/", -1)
+//	mainClass := classLoader.LoadClass(className)
+//	mainMethod := mainClass.GetMainMethod()
+//	if mainMethod != nil {
+//		interpret(mainMethod)
+//	} else {
+//		fmt.Printf("Main method not found in class %s\n", cmd.class)
+//	}
+//}
 
 // 启动jvm去加载类
 //func startJVM(cmd *Cmd) {

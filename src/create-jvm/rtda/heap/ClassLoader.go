@@ -24,17 +24,21 @@ class names:
 
 // ClassLoader 类加载器
 type ClassLoader struct {
+	// 这里是把已经解析好的字节码文件 classfile文件信息传进来
 	cp *classpath.Classpath
+	// 用来标记是否需要打印类加载器加载类的过程
+	verboseFlag bool
 	// classMap字段记录已经加载的类数据，key是类的完全限定名
 	// 可以把classMap字段当作方法区的具体实现
 	classMap map[string]*Class // loaded classes
 }
 
 //NewClassLoader // NewClassLoader()函数创建ClassLoader实例
-func NewClassLoader(cp *classpath.Classpath) *ClassLoader {
+func NewClassLoader(cp *classpath.Classpath, verboseFlag bool) *ClassLoader {
 	return &ClassLoader{
-		cp:       cp,
-		classMap: make(map[string]*Class),
+		cp:          cp,
+		verboseFlag: verboseFlag,
+		classMap:    make(map[string]*Class),
 	}
 }
 

@@ -11,6 +11,12 @@ type Cmd struct {
 	helpFlag bool
 	// 版本信息
 	versionFlag bool
+	/**
+	java命令提供了-verbose:class（简写为-verbose）选项，可以控制是否把类加载信息输出到控制台。
+	也增加这样一个选项，另外参照这个选项增加一个-verbose:inst选项，用来控制是否把指令执行信息输出到控制台。
+	*/
+	verboseClassFlag bool
+	verboseInstFlag  bool
 	// 指令选项
 	cpOption string
 	// Java虚拟机将使用JDK的启动类路径来寻找和加载Java标准库中的类，所以这里是指定jre目录的位置
@@ -27,6 +33,9 @@ func parseCmd() *Cmd {
 	flag.Usage = printUsage
 	flag.BoolVar(&cmd.helpFlag, "help", false, "print help message")
 	flag.BoolVar(&cmd.helpFlag, "?", false, "print help message")
+	flag.BoolVar(&cmd.verboseClassFlag, "verbose", false, "enable verbose output")
+	flag.BoolVar(&cmd.verboseClassFlag, "verbose:class", false, "enable verbose output")
+	flag.BoolVar(&cmd.verboseInstFlag, "verbose:inst", false, "enable verbose output")
 	flag.BoolVar(&cmd.versionFlag, "version", false, "print version and exit")
 	flag.StringVar(&cmd.cpOption, "classpath", "", "path to classpath")
 	flag.StringVar(&cmd.cpOption, "cp", "", "path to classpath")
