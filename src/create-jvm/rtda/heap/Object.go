@@ -32,5 +32,5 @@ func (self *Object) Fields() Slots {
 
 // IsInstanceOf // 用来判断 class 类型是否是 self
 func (self *Object) IsInstanceOf(class *Class) bool {
-	return class.isAssignableFrom(self.class)
+	return class.IsAssignableFrom(self.class)
 }
