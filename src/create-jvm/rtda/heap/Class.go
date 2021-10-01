@@ -41,7 +41,7 @@ type Class struct {
 	staticSlotCount uint
 	// 插槽数组，之后用于判断变量的位置信息
 	staticVars Slots
-
+	// 用来判断是否开始初始化的
 	initStarted bool
 }
 
