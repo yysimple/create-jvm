@@ -1,7 +1,6 @@
 package classpath
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -79,15 +78,15 @@ func (self *Classpath) parseUserClasspath(cpOption string) {
 func (self *Classpath) ReadClass(className string) ([]byte, Entry, error) {
 	className = className + ".class"
 	if data, entry, err := self.bootClasspath.readClass(className); err == nil {
-		fmt.Println("==== 从BootStrap加载器路径下读取 ====")
+		// fmt.Println("==== 从BootStrap加载器路径下读取 ====")
 		return data, entry, err
 	}
 	if data, entry, err := self.extClasspath.readClass(className); err == nil {
-		fmt.Println("==== 从ext加载器路径下读取 ====")
+		// fmt.Println("==== 从ext加载器路径下读取 ====")
 		return data, entry, err
 	}
 	// 上面都没有加载到，则使用用户类路径去加载
-	fmt.Println("==== 从用户自定义加载器路径下读取 ====")
+	// fmt.Println("==== 从用户自定义加载器路径下读取 ====")
 	return self.userClasspath.readClass(className)
 }
 
