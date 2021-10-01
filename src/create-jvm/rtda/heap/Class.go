@@ -98,11 +98,11 @@ func (self *Class) StaticVars() Slots {
 // jvms 5.4.4 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-5.html#jvms-5.4.4
 func (self *Class) isAccessibleTo(other *Class) bool {
 	return self.IsPublic() ||
-		self.getPackageName() == other.getPackageName()
+		self.GetPackageName() == other.GetPackageName()
 }
 
-// 获取包名
-func (self *Class) getPackageName() string {
+// GetPackageName 获取包名
+func (self *Class) GetPackageName() string {
 	// 这里拿到最后一个名字
 	if i := strings.LastIndex(self.name, "/"); i >= 0 {
 		return self.name[:i]
@@ -125,6 +125,11 @@ func (self *Class) getStaticMethod(name, descriptor string) *Method {
 		}
 	}
 	return nil
+}
+
+// GetClinitMethod 这是获取到静态方法初始化信息
+func (self *Class) GetClinitMethod() *Method {
+	return self.getStaticMethod("<clinit>", "()V")
 }
 
 func (self *Class) NewObject() *Object {
