@@ -70,3 +70,8 @@ func (self *Thread) CurrentFrame() *Frame {
 func (self *Thread) NewFrame(method *heap.Method) *Frame {
 	return newFrame(self, method)
 }
+
+// IsStackEmpty 判断栈是否为空
+func (self *Thread) IsStackEmpty() bool {
+	return self.stack.isEmpty()
+}

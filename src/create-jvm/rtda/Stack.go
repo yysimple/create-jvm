@@ -58,3 +58,8 @@ func (self *Stack) top() *Frame {
 
 	return self._top
 }
+
+// 判断栈是否为空
+func (self *Stack) isEmpty() bool {
+	return self._top == nil
+}
