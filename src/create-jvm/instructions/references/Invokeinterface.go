@@ -51,3 +51,14 @@ func (self *INVOKE_INTERFACE) Execute(frame *rtda.Frame) {
 
 	base.InvokeMethod(frame, methodToBeInvoked)
 }
+
+/**
+invokestatic指令调用静态方法，很好理解。
+invokespecial指令也比较好理解。
+首先，因为私有方法和构造函数不需要动态绑定，所以invokespecial指令可以加快方法调用速度。
+其次，使用super关键字调用超类中的方法不能使用invokevirtual指令，否则会陷入无限循环。
+那么为什么要单独定义invokeinterface指令呢？统一使用invokevirtual指令不行吗？答案是，可以，但是可能会影响效率。
+这两条指令的区别在于：当Java虚拟机通过invokevirtual调用方法时，this引用指向某个类（或其子类）的实例。
+因为类的继承层次是固定的，所以虚拟机可以使用一种叫作vtable（Virtual MethodTable）的技术加速方法查找。
+但是当通过invokeinterface指令调用接口方法时，因为this引用可以指向任何实现了该接口的类的实例，所以无法使用vtable技术。
+*/
