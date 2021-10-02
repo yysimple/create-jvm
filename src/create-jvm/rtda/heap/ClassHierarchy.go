@@ -2,18 +2,54 @@ package heap
 
 // IsAssignableFrom  一些继承关系的判断
 func (self *Class) IsAssignableFrom(other *Class) bool {
-	s, t := other, self
 
 	// 也就是说，在三种情况下，S类型的引用值可以赋值给T类型：S和T是同一类型；T是类且S是T的子类；或者T是接口且S实现了T接口
 	// https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.instanceof
+	s, t := other, self
+
 	if s == t {
 		return true
 	}
-	if !t.IsInterface() {
-		return s.IsSubClassOf(t)
+
+	if !s.IsArray() {
+		if !s.IsInterface() {
+			// s is class
+			if !t.IsInterface() {
+				// t is not interface
+				return s.IsSubClassOf(t)
+			} else {
+				// t is interface
+				return s.IsImplements(t)
+			}
+		} else {
+			// s is interface
+			if !t.IsInterface() {
+				// t is not interface
+				return t.isJlObject()
+			} else {
+				// t is interface
+				return t.IsSuperInterfaceOf(s)
+			}
+		}
 	} else {
-		return s.IsImplements(t)
+		// s is array
+		if !t.IsArray() {
+			if !t.IsInterface() {
+				// t is class
+				return t.isJlObject()
+			} else {
+				// t is interface
+				return t.isJlCloneable() || t.isJioSerializable()
+			}
+		} else {
+			// t is array
+			sc := s.ComponentClass()
+			tc := t.ComponentClass()
+			return sc == tc || tc.IsAssignableFrom(sc)
+		}
 	}
+
+	return false
 }
 
 // IsSubClassOf self extends c
@@ -52,7 +88,7 @@ func (self *Class) IsSubInterfaceOf(iface *Class) bool {
 	return false
 }
 
-// IsSuperClassOf // c extends self
-func (self *Class) IsSuperClassOf(other *Class) bool {
-	return other.IsSubClassOf(self)
+// IsSuperInterfaceOf // iface extends self
+func (self *Class) IsSuperInterfaceOf(iface *Class) bool {
+	return iface.IsSubInterfaceOf(self)
 }
