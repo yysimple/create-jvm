@@ -161,3 +161,18 @@ func (self *Class) InitStarted() bool {
 func (self *Class) StartInit() {
 	self.initStarted = true
 }
+
+func (self *Class) isJlObject() bool {
+	return self.name == "java/lang/Object"
+}
+func (self *Class) isJlCloneable() bool {
+	return self.name == "java/lang/Cloneable"
+}
+func (self *Class) isJioSerializable() bool {
+	return self.name == "java/io/Serializable"
+}
+
+func (self *Class) ArrayClass() *Class {
+	arrayClassName := getArrayClassName(self.name)
+	return self.loader.LoadClass(arrayClassName)
+}
