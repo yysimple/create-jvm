@@ -3,6 +3,7 @@ package constants
 import (
 	"create-jvm/instructions/base"
 	"create-jvm/rtda"
+	"create-jvm/rtda/heap"
 )
 
 // LDC // Push item from run-time constant pool
@@ -19,10 +20,11 @@ func (self *LDC_W) Execute(frame *rtda.Frame) {
 	_ldc(frame, self.Index)
 }
 
+// 一般用来加载字符串、最大常量值大于short之后的int类型
 func _ldc(frame *rtda.Frame, index uint) {
 	stack := frame.OperandStack()
-	cp := frame.Method().Class().RtConstantPool()
-	c := cp.GetConstant(index)
+	class := frame.Method().Class()
+	c := class.RtConstantPool().GetConstant(index)
 
 	switch c.(type) {
 	case int32:
@@ -30,6 +32,9 @@ func _ldc(frame *rtda.Frame, index uint) {
 	case float32:
 		stack.PushFloat(c.(float32))
 	// case string:
+	case string:
+		internedStr := heap.JString(class.Loader(), c.(string))
+		stack.PushRef(internedStr)
 	// case *heap.ClassRef:
 	// case MethodType, MethodHandle
 	default:

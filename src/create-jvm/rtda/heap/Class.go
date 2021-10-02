@@ -162,6 +162,7 @@ func (self *Class) StartInit() {
 	self.initStarted = true
 }
 
+// 下面都是判断是否是指定的方法
 func (self *Class) isJlObject() bool {
 	return self.name == "java/lang/Object"
 }
@@ -172,7 +173,23 @@ func (self *Class) isJioSerializable() bool {
 	return self.name == "java/io/Serializable"
 }
 
+// ArrayClass // 获取到数组的信息，并初始化
 func (self *Class) ArrayClass() *Class {
 	arrayClassName := getArrayClassName(self.name)
 	return self.loader.LoadClass(arrayClassName)
+}
+
+// getField // 获取对应的字段信息
+func (self *Class) getField(name, descriptor string, isStatic bool) *Field {
+	for c := self; c != nil; c = c.superClass {
+		for _, field := range c.fields {
+			if field.IsStatic() == isStatic &&
+				field.name == name &&
+				field.descriptor == descriptor {
+
+				return field
+			}
+		}
+	}
+	return nil
 }

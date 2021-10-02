@@ -35,3 +35,17 @@ func (self *Object) Fields() Slots {
 func (self *Object) IsInstanceOf(class *Class) bool {
 	return class.IsAssignableFrom(self.class)
 }
+
+// GetRefVar // 对应的字段信息
+func (self *Object) GetRefVar(name, descriptor string) *Object {
+	field := self.class.getField(name, descriptor, false)
+	slots := self.data.(Slots)
+	return slots.GetRef(field.slotId)
+}
+
+// SetRefVar // 设置引用值，并放入到slot中
+func (self *Object) SetRefVar(name, descriptor string, ref *Object) {
+	field := self.class.getField(name, descriptor, false)
+	slots := self.data.(Slots)
+	slots.SetRef(field.slotId, ref)
+}
