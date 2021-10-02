@@ -77,6 +77,11 @@ func (self *Class) IsImplements(iface *Class) bool {
 	return false
 }
 
+// c extends self
+func (self *Class) IsSuperClassOf(other *Class) bool {
+	return other.IsSubClassOf(self)
+}
+
 // IsSubInterfaceOf self extends iface
 // 判断S是否实现了T接口，就看S或S的（直接或间接）超类是否实现了某个接口T' ,T’要么是T，要么是T的子接口
 func (self *Class) IsSubInterfaceOf(iface *Class) bool {
