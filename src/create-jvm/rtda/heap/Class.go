@@ -87,6 +87,11 @@ func (self *Class) IsEnum() bool {
 	return 0 != self.accessFlags&ACC_ENUM
 }
 
+// Loader 返回类加载器
+func (self *Class) Loader() *ClassLoader {
+	return self.loader
+}
+
 // getters
 func (self *Class) RtConstantPool() *RtConstantPool {
 	return self.rtConstantPool
