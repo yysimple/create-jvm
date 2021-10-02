@@ -9,7 +9,8 @@ type Object struct {
 	// 存的当前类的指针信息
 	class *Class
 	// 存放实例变量
-	fields Slots
+	// fields Slots
+	data interface{}
 }
 
 /**
@@ -17,8 +18,8 @@ type Object struct {
 */
 func newObject(class *Class) *Object {
 	return &Object{
-		class:  class,
-		fields: newSlots(class.instanceSlotCount),
+		class: class,
+		data:  newSlots(class.instanceSlotCount),
 	}
 }
 
@@ -27,7 +28,7 @@ func (self *Object) Class() *Class {
 	return self.class
 }
 func (self *Object) Fields() Slots {
-	return self.fields
+	return self.data.(Slots)
 }
 
 // IsInstanceOf // 用来判断 class 类型是否是 self

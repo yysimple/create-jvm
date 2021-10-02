@@ -54,7 +54,32 @@ func (self *ClassLoader) LoadClass(name string) *Class {
 		return class
 	}
 
+	if name[0] == '[' {
+		// array class
+		return self.loadArrayClass(name)
+	}
+
 	return self.loadNonArrayClass(name)
+}
+
+// loadArrayClass 加载数组
+func (self *ClassLoader) loadArrayClass(name string) *Class {
+	class := &Class{
+		accessFlags: ACC_PUBLIC, // todo
+		name:        name,
+		loader:      self,
+		// 因为数组类不需要初始化，所以把initStarted字段设置成true
+		initStarted: true,
+		// 数组类的超类是java.lang.Object，并且实现了java.lang. Cloneable和java.io.Serializable接口
+		superClass: self.LoadClass("java/lang/Object"),
+		interfaces: []*Class{
+			self.LoadClass("java/lang/Cloneable"),
+			self.LoadClass("java/io/Serializable"),
+		},
+	}
+	// 缓存
+	self.classMap[name] = class
+	return class
 }
 
 // loadNonArrayClass // 加载非数组的类，也是缓存中没有的
