@@ -60,16 +60,29 @@ func loop(thread *rtda.Thread, bytecode []byte) {
 	}
 }*/
 // logInst参数控制是否把指令执行信息打印到控制台。
-func interpret(method *heap.Method, logInst bool) {
+func interpret(method *heap.Method, logInst bool, args []string) {
 	// 涉及到方法的调用，所以先初始化一个固定大小的栈
 	thread := rtda.NewThread()
 	// 在基于栈开始创建栈帧
 	frame := thread.NewFrame(method)
 	// 入栈
 	thread.PushFrame(frame)
+	jArgs := createArgsArray(method.Class().Loader(), args)
+	frame.LocalVars().SetRef(0, jArgs)
 
 	defer catchErr(thread)
 	loop(thread, logInst)
+}
+
+// interpret()函数接收从startJVM()函数中传递过来的args参数，然后调用createArgs-Array()函数把它转换成Java字符串数组，最后把这个数组推入操作数栈顶
+func createArgsArray(loader *heap.ClassLoader, args []string) *heap.Object {
+	stringClass := loader.LoadClass("java/lang/String")
+	argsArr := stringClass.ArrayClass().NewArray(uint(len(args)))
+	jArgs := argsArr.Refs()
+	for i, arg := range args {
+		jArgs[i] = heap.JString(loader, arg)
+	}
+	return argsArr
 }
 
 // catchErr()函数会打印出错信息
