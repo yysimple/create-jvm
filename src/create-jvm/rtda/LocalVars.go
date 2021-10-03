@@ -63,3 +63,8 @@ func (self LocalVars) SetRef(index uint, ref *heap.Object) {
 func (self LocalVars) GetRef(index uint) *heap.Object {
 	return self[index].ref
 }
+
+// GetThis 获取当前引用/GetThis()方法其实就是调用GetRef(0)，不过为了提高代码的可读性，给LocalVars结构体添加了这个方法
+func (self LocalVars) GetThis() *heap.Object {
+	return self.GetRef(0)
+}

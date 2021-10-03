@@ -35,11 +35,55 @@ type ClassLoader struct {
 
 //NewClassLoader // NewClassLoader()函数创建ClassLoader实例
 func NewClassLoader(cp *classpath.Classpath, verboseFlag bool) *ClassLoader {
-	return &ClassLoader{
+	loader := &ClassLoader{
 		cp:          cp,
 		verboseFlag: verboseFlag,
 		classMap:    make(map[string]*Class),
 	}
+
+	loader.loadBasicClasses()
+	loader.loadPrimitiveClasses()
+	return loader
+}
+
+// 这里主要是去判断是否已经设置了 类类型
+// loadBasicClasses()函数先加载java.lang.Class类，这又会触发java.lang.Object等类和接口的加载。
+// 然后遍历classMap，给已经加载的每一个类关联类对象
+func (self *ClassLoader) loadBasicClasses() {
+	jlClassClass := self.LoadClass("java/lang/Class")
+	for _, class := range self.classMap {
+		if class.jClass == nil {
+			class.jClass = jlClassClass.NewObject()
+			class.jClass.extra = class
+		}
+	}
+}
+
+// 和数组类一样，基本类型的类也是由Java虚拟机在运行期间生成的
+func (self *ClassLoader) loadPrimitiveClasses() {
+	for primitiveType, _ := range primitiveTypes {
+		self.loadPrimitiveClass(primitiveType)
+	}
+}
+
+/**
+这里有三点需要说明：
+第一，void和基本类型的类名就是void、int、float等。
+第二，基本类型的类没有超类，也没有实现任何接口。
+第三，非基本类型的类对象是通过ldc指令加载到操作数栈中的。
+而基本类型的类对象，虽然在Java代码中看起来是通过字面量获取的，但是编译之后的指令并不是ldc，而是getstatic。
+每个基本类型都有一个包装类，包装类中有一个静态常量，叫作TYPE，其中存放的就是基本类型的类。例如java.lang.Integer类
+*/
+func (self *ClassLoader) loadPrimitiveClass(className string) {
+	class := &Class{
+		accessFlags: ACC_PUBLIC, // todo
+		name:        className,
+		loader:      self,
+		initStarted: true,
+	}
+	class.jClass = self.classMap["java/lang/Class"].NewObject()
+	class.jClass.extra = class
+	self.classMap[className] = class
 }
 
 /**
@@ -54,12 +98,20 @@ func (self *ClassLoader) LoadClass(name string) *Class {
 		return class
 	}
 
-	if name[0] == '[' {
-		// array class
-		return self.loadArrayClass(name)
+	var class *Class
+	if name[0] == '[' { // array class
+		class = self.loadArrayClass(name)
+	} else {
+		class = self.loadNonArrayClass(name)
 	}
 
-	return self.loadNonArrayClass(name)
+	// 方法区中要是存在其类类型，则不加载，反之区重新加载
+	if jlClassClass, ok := self.classMap["java/lang/Class"]; ok {
+		class.jClass = jlClassClass.NewObject()
+		class.jClass.extra = class
+	}
+
+	return class
 }
 
 // loadArrayClass 加载数组
