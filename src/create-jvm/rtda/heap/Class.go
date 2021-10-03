@@ -43,6 +43,8 @@ type Class struct {
 	staticVars Slots
 	// 用来判断是否开始初始化的
 	initStarted bool
+	// 类类型-通过jClass字段，每个Class结构体实例都与一个类对象关联
+	jClass *Object
 }
 
 // newClass // 把ClassFile格式的数据转换成 class结构
@@ -192,4 +194,8 @@ func (self *Class) getField(name, descriptor string, isStatic bool) *Field {
 		}
 	}
 	return nil
+}
+
+func (self *Class) JClass() *Object {
+	return self.jClass
 }

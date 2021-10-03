@@ -11,6 +11,8 @@ type Object struct {
 	// 存放实例变量
 	// fields Slots
 	data interface{}
+	// extra字段用来记录Object结构体实例的额外信息
+	extra interface{}
 }
 
 /**
@@ -48,4 +50,11 @@ func (self *Object) SetRefVar(name, descriptor string, ref *Object) {
 	field := self.class.getField(name, descriptor, false)
 	slots := self.data.(Slots)
 	slots.SetRef(field.slotId, ref)
+}
+
+func (self *Object) Extra() interface{} {
+	return self.extra
+}
+func (self *Object) SetExtra(extra interface{}) {
+	self.extra = extra
 }
