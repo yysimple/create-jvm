@@ -15,22 +15,54 @@ type Method struct {
 }
 
 // 初始化一个方法信息，也是从classFile转换过来
-func newMethods(class *Class, classFileMethods []*classfile.MemberInfo) []*Method {
-	methods := make([]*Method, len(classFileMethods))
-	for i, classFileMethod := range classFileMethods {
-		methods[i] = &Method{}
-		methods[i].class = class
-		methods[i].copyMemberInfo(classFileMethod)
-		methods[i].copyAttributes(classFileMethod)
-		methods[i].calcArgSlotCount()
+func newMethods(class *Class, cfMethods []*classfile.MemberInfo) []*Method {
+	methods := make([]*Method, len(cfMethods))
+	for i, cfMethod := range cfMethods {
+		methods[i] = newMethod(class, cfMethod)
 	}
 	return methods
 }
 
+// 详细初始化每个方法，包括native方法
+func newMethod(class *Class, cfMethod *classfile.MemberInfo) *Method {
+	method := &Method{}
+	method.class = class
+	method.copyMemberInfo(cfMethod)
+	method.copyAttributes(cfMethod)
+	md := parseMethodDescriptor(method.descriptor)
+	method.calcArgSlotCount(md.parameterTypes)
+	// 先计算argSlotCount字段，如果是本地方法，则注入字节码和其他信息
+	if method.IsNative() {
+		method.injectCodeAttribute(md.returnType)
+	}
+	return method
+}
+
+// 本地方法在class文件中没有Code属性，所以需要给maxStack和maxLocals字段赋值
+func (self *Method) injectCodeAttribute(returnType string) {
+	// 本地方法帧的操作数栈至少要能容纳返回值，为了简化代码，暂时给maxStack字段赋值为4
+	self.maxStack = 4 // todo
+	// 因为本地方法帧的局部变量表只用来存放参数值，所以把argSlotCount赋给maxLocals字段刚好
+	self.maxLocals = self.argSlotCount
+	switch returnType[0] {
+	case 'V':
+		self.code = []byte{0xfe, 0xb1} // return
+	case 'L', '[':
+		self.code = []byte{0xfe, 0xb0} // areturn
+	case 'D':
+		self.code = []byte{0xfe, 0xaf} // dreturn
+	case 'F':
+		self.code = []byte{0xfe, 0xae} // freturn
+	case 'J':
+		self.code = []byte{0xfe, 0xad} // lreturn
+	default:
+		self.code = []byte{0xfe, 0xac} // ireturn
+	}
+}
+
 // 这里是去解析方法中的参数占用插槽的个数
-func (self *Method) calcArgSlotCount() {
-	parsedDescriptor := parseMethodDescriptor(self.descriptor)
-	for _, paramType := range parsedDescriptor.parameterTypes {
+func (self *Method) calcArgSlotCount(paramTypes []string) {
+	for _, paramType := range paramTypes {
 		self.argSlotCount++
 		if paramType == "J" || paramType == "D" {
 			self.argSlotCount++

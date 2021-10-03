@@ -3,7 +3,6 @@ package base
 import (
 	"create-jvm/rtda"
 	"create-jvm/rtda/heap"
-	"fmt"
 )
 
 // InvokeMethod 函数的前三行代码创建新的帧并推入Java虚拟机栈，剩下的代码传递参数
@@ -26,16 +25,6 @@ func InvokeMethod(invokerFrame *rtda.Frame, method *heap.Method) {
 			slot := invokerFrame.OperandStack().PopSlot()
 			// 在代码中，并没有对long和double类型做特别处理。因为操作的是Slot结构体，所以这是没问题的，因为之前解析的时候也是解析成两个slot
 			newFrame.LocalVars().SetSlot(uint(i), slot)
-		}
-	}
-
-	// hack!
-	if method.IsNative() {
-		if method.Name() == "registerNatives" {
-			thread.PopFrame()
-		} else {
-			panic(fmt.Sprintf("native method: %v.%v%v\n",
-				method.Class().Name(), method.Name(), method.Descriptor()))
 		}
 	}
 }

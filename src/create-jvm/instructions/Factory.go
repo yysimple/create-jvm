@@ -10,6 +10,7 @@ import (
 	"create-jvm/instructions/loads"
 	"create-jvm/instructions/math"
 	"create-jvm/instructions/references"
+	"create-jvm/instructions/reserved"
 	"create-jvm/instructions/stack"
 	"create-jvm/instructions/stores"
 	"fmt"
@@ -164,7 +165,7 @@ var (
 	// athrow        = &ATHROW{}
 	// monitorenter  = &MONITOR_ENTER{}
 	// monitorexit   = &MONITOR_EXIT{}
-	// invoke_native = &INVOKE_NATIVE{}
+	invoke_native = &reserved.INVOKE_NATIVE{}
 )
 
 func NewInstruction(opcode byte) base.Instruction {
@@ -571,6 +572,8 @@ func NewInstruction(opcode byte) base.Instruction {
 		return &extended.IFNONNULL{}
 	case 0xc8:
 		return &extended.GOTO_W{}
+	case 0xfe:
+		return invoke_native
 	// case 0xc9:
 	// 	return &JSR_W{}
 	// case 0xca: breakpoint
