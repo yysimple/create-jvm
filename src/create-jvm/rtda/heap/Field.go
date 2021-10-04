@@ -54,3 +54,9 @@ func (self *Field) SlotId() uint {
 func (self *Field) isLongOrDouble() bool {
 	return self.descriptor == "J" || self.descriptor == "D"
 }
+
+// Type 模拟type，获取字段信息 // reflection
+func (self *Field) Type() *Class {
+	className := toClassName(self.descriptor)
+	return self.class.loader.LoadClass(className)
+}

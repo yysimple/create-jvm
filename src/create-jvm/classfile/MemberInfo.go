@@ -98,3 +98,37 @@ func (self *MemberInfo) ConstantValueAttribute() *ConstantValueAttribute {
 	}
 	return nil
 }
+
+// ExceptionsAttribute 解析异常表信息
+func (self *MemberInfo) ExceptionsAttribute() *ExceptionsAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *ExceptionsAttribute:
+			return attrInfo.(*ExceptionsAttribute)
+		}
+	}
+	return nil
+}
+
+func (self *MemberInfo) RuntimeVisibleAnnotationsAttributeData() []byte {
+	return self.getUnparsedAttributeData("RuntimeVisibleAnnotations")
+}
+func (self *MemberInfo) RuntimeVisibleParameterAnnotationsAttributeData() []byte {
+	return self.getUnparsedAttributeData("RuntimeVisibleParameterAnnotationsAttribute")
+}
+func (self *MemberInfo) AnnotationDefaultAttributeData() []byte {
+	return self.getUnparsedAttributeData("AnnotationDefault")
+}
+
+func (self *MemberInfo) getUnparsedAttributeData(name string) []byte {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *UnparsedAttribute:
+			unparsedAttr := attrInfo.(*UnparsedAttribute)
+			if unparsedAttr.name == name {
+				return unparsedAttr.info
+			}
+		}
+	}
+	return nil
+}

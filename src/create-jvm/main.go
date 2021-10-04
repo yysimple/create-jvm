@@ -4,24 +4,22 @@ import (
 	"create-jvm/classfile"
 	"create-jvm/classpath"
 	"create-jvm/rtda"
-	"create-jvm/rtda/heap"
 	"fmt"
-	"strings"
 )
 
 func main() {
 	cmd := parseCmd()
 
 	if cmd.versionFlag {
-		fmt.Println("version 1.0.0")
+		println("version 0.0.1")
 	} else if cmd.helpFlag || cmd.class == "" {
 		printUsage()
 	} else {
-		startJVM(cmd)
+		newJVM(cmd).start()
 	}
 }
 
-func startJVM(cmd *Cmd) {
+/*func startJVM(cmd *Cmd) {
 	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
 	classLoader := heap.NewClassLoader(cp, cmd.verboseClassFlag)
 
@@ -33,7 +31,7 @@ func startJVM(cmd *Cmd) {
 	} else {
 		fmt.Printf("Main method not found in class %s\n", cmd.class)
 	}
-}
+}*/
 
 //func startJVM(cmd *Cmd) {
 //	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)

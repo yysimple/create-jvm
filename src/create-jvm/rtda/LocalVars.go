@@ -20,6 +20,11 @@ func (self LocalVars) SetSlot(index uint, slot Slot) {
 	self[index] = slot
 }
 
+// GetThis 获取当前引用/GetThis()方法其实就是调用GetRef(0)，不过为了提高代码的可读性，给LocalVars结构体添加了这个方法
+func (self LocalVars) GetThis() *heap.Object {
+	return self.GetRef(0)
+}
+
 func (self LocalVars) SetInt(index uint, val int32) {
 	self[index].num = val
 }
@@ -36,7 +41,7 @@ func (self LocalVars) GetFloat(index uint) float32 {
 	return math.Float32frombits(bits)
 }
 
-// SetLong //long consumes two slots
+// long consumes two slots
 func (self LocalVars) SetLong(index uint, val int64) {
 	self[index].num = int32(val)
 	self[index+1].num = int32(val >> 32)
@@ -47,7 +52,7 @@ func (self LocalVars) GetLong(index uint) int64 {
 	return int64(high)<<32 | int64(low)
 }
 
-// SetDouble // double consumes two slots
+// double consumes two slots
 func (self LocalVars) SetDouble(index uint, val float64) {
 	bits := math.Float64bits(val)
 	self.SetLong(index, int64(bits))
@@ -64,7 +69,6 @@ func (self LocalVars) GetRef(index uint) *heap.Object {
 	return self[index].ref
 }
 
-// GetThis 获取当前引用/GetThis()方法其实就是调用GetRef(0)，不过为了提高代码的可读性，给LocalVars结构体添加了这个方法
-func (self LocalVars) GetThis() *heap.Object {
-	return self.GetRef(0)
+func (self LocalVars) GetBoolean(index uint) bool {
+	return self.GetInt(index) == 1
 }

@@ -12,10 +12,18 @@ type Method struct {
 	code []byte
 	// 异常表信息
 	exceptionTable ExceptionTable
+	// 异常属性
+	exceptions *classfile.ExceptionsAttribute
 	// 记录该方法有多少个参数
 	argSlotCount uint
+	// 方法的描述信息
+	parsedDescriptor *MethodDescriptor
 	// 方法执行的行号
 	lineNumberTable *classfile.LineNumberTableAttribute
+	// 参数信息
+	parameterAnnotationData []byte // RuntimeVisibleParameterAnnotations_attribute
+	// 注解信息
+	annotationDefaultData []byte // AnnotationDefault_attribute
 }
 
 // 初始化一个方法信息，也是从classFile转换过来
@@ -87,6 +95,10 @@ func (self *Method) copyAttributes(cfMethod *classfile.MemberInfo) {
 		self.exceptionTable = newExceptionTable(codeAttr.ExceptionTable(),
 			self.class.rtConstantPool)
 	}
+	self.exceptions = cfMethod.ExceptionsAttribute()
+	self.annotationData = cfMethod.RuntimeVisibleAnnotationsAttributeData()
+	self.parameterAnnotationData = cfMethod.RuntimeVisibleParameterAnnotationsAttributeData()
+	self.annotationDefaultData = cfMethod.AnnotationDefaultAttributeData()
 }
 
 func (self *Method) IsSynchronized() bool {
@@ -119,6 +131,10 @@ func (self *Method) Code() []byte {
 	return self.code
 }
 
+func (self *Method) AnnotationDefaultData() []byte {
+	return self.annotationDefaultData
+}
+
 func (self *Method) ArgSlotCount() uint {
 	return self.argSlotCount
 }
@@ -141,4 +157,60 @@ func (self *Method) GetLineNumber(pc int) int {
 		return -1
 	}
 	return self.lineNumberTable.GetLineNumber(pc)
+}
+
+// 判断是否是构造器
+func (self *Method) isConstructor() bool {
+	return !self.IsStatic() && self.name == "<init>"
+}
+
+//ParameterTypes  获取所有的参数信息 reflection
+func (self *Method) ParameterTypes() []*Class {
+	if self.argSlotCount == 0 {
+		return nil
+	}
+
+	paramTypes := self.parsedDescriptor.parameterTypes
+	paramClasses := make([]*Class, len(paramTypes))
+	for i, paramType := range paramTypes {
+		paramClassName := toClassName(paramType)
+		paramClasses[i] = self.class.loader.LoadClass(paramClassName)
+	}
+
+	return paramClasses
+}
+
+// ExceptionTypes 异常类型
+func (self *Method) ExceptionTypes() []*Class {
+	if self.exceptions == nil {
+		return nil
+	}
+
+	exIndexTable := self.exceptions.ExceptionIndexTable()
+	exClasses := make([]*Class, len(exIndexTable))
+	cp := self.class.rtConstantPool
+
+	for i, exIndex := range exIndexTable {
+		classRef := cp.GetConstant(uint(exIndex)).(*ClassRef)
+		exClasses[i] = classRef.ResolvedClass()
+	}
+
+	return exClasses
+}
+
+// ReturnType 获取方法的返回值信息
+func (self *Method) ReturnType() *Class {
+	returnType := self.parsedDescriptor.returnType
+	returnClassName := toClassName(returnType)
+	return self.class.loader.LoadClass(returnClassName)
+}
+
+//ParameterAnnotationData 获取参数信息
+func (self *Method) ParameterAnnotationData() []byte {
+	return self.parameterAnnotationData
+}
+
+// 是否是静态变量的初始化操作
+func (self *Method) isClinit() bool {
+	return self.IsStatic() && self.name == "<clinit>"
 }

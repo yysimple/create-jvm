@@ -4,10 +4,12 @@ import "create-jvm/classfile"
 
 // ClassMember //用来存储类的字段信息个方法信息，对应转换classFile中的字段表和方法表
 type ClassMember struct {
-	accessFlags uint16
-	name        string
-	descriptor  string
-	class       *Class
+	accessFlags    uint16
+	name           string
+	descriptor     string
+	signature      string
+	annotationData []byte // RuntimeVisibleAnnotations_attribute
+	class          *Class
 }
 
 // copyMemberInfo // 进行转换操作
@@ -40,6 +42,18 @@ func (self *ClassMember) IsSynthetic() bool {
 func (self *ClassMember) Name() string {
 	return self.name
 }
+
+func (self *ClassMember) Signature() string {
+	return self.signature
+}
+func (self *ClassMember) AnnotationData() []byte {
+	return self.annotationData
+}
+
+func (self *ClassMember) AccessFlags() uint16 {
+	return self.accessFlags
+}
+
 func (self *ClassMember) Descriptor() string {
 	return self.descriptor
 }
