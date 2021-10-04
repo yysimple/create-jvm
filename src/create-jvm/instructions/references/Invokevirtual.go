@@ -4,7 +4,6 @@ import (
 	"create-jvm/instructions/base"
 	"create-jvm/rtda"
 	"create-jvm/rtda/heap"
-	"fmt"
 )
 
 // INVOKE_VIRTUAL // Invoke instance method; dispatch based on class
@@ -44,29 +43,4 @@ func (self *INVOKE_VIRTUAL) Execute(frame *rtda.Frame) {
 	}
 
 	base.InvokeMethod(frame, methodToBeInvoked)
-}
-
-// 这是用来模拟System.out.println的
-func _println(stack *rtda.OperandStack, descriptor string) {
-	switch descriptor {
-	case "(Z)V":
-		fmt.Printf("%v\n", stack.PopInt() != 0)
-	case "(C)V":
-		fmt.Printf("%c\n", stack.PopInt())
-	case "(I)V", "(B)V", "(S)V":
-		fmt.Printf("%v\n", stack.PopInt())
-	case "(F)V":
-		fmt.Printf("%v\n", stack.PopFloat())
-	case "(J)V":
-		fmt.Printf("%v\n", stack.PopLong())
-	case "(D)V":
-		fmt.Printf("%v\n", stack.PopDouble())
-	case "(Ljava/lang/String;)V":
-		jStr := stack.PopRef()
-		goStr := heap.GoString(jStr)
-		fmt.Println(goStr)
-	default:
-		panic("println: " + descriptor)
-	}
-	stack.PopRef()
 }
