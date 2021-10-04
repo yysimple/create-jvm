@@ -6,6 +6,9 @@ import (
 	"create-jvm/rtda"
 )
 
+import _ "create-jvm/native/java/lang"
+import _ "create-jvm/native/sun/misc"
+
 // INVOKE_NATIVE // Invoke native method
 type INVOKE_NATIVE struct{ base.NoOperandsInstruction }
 
