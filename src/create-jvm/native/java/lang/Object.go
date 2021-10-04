@@ -34,6 +34,8 @@ func hashCode(frame *rtda.Frame) {
 
 // protected native Object clone() throws CloneNotSupportedException;
 // ()Ljava/lang/Object;
+// 如果类没有实现Cloneable接口，则抛出CloneNotSupportedException异常
+// 否则调用Object结构体的Clone()方法克隆对象，然后把对象副本引用推入操作数栈顶
 func clone(frame *rtda.Frame) {
 	this := frame.LocalVars().GetThis()
 
@@ -42,5 +44,5 @@ func clone(frame *rtda.Frame) {
 		panic("java.lang.CloneNotSupportedException")
 	}
 
-	//frame.OperandStack().PushRef(this.Clone())
+	frame.OperandStack().PushRef(this.Clone())
 }
