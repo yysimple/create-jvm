@@ -75,3 +75,13 @@ func (self *Thread) NewFrame(method *heap.Method) *Frame {
 func (self *Thread) IsStackEmpty() bool {
 	return self.stack.isEmpty()
 }
+
+// ClearStack // 清空栈
+func (self *Thread) ClearStack() {
+	self.stack.clear()
+}
+
+// GetFrames 获取当前所有的栈帧
+func (self *Thread) GetFrames() []*Frame {
+	return self.stack.getFrames()
+}

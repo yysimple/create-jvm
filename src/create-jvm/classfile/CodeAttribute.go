@@ -41,6 +41,16 @@ func (self *CodeAttribute) readInfo(reader *ClassReader) {
 	self.attributes = readAttributes(reader, self.cp)
 }
 
+func (self *CodeAttribute) LineNumberTableAttribute() *LineNumberTableAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *LineNumberTableAttribute:
+			return attrInfo.(*LineNumberTableAttribute)
+		}
+	}
+	return nil
+}
+
 // MaxStack 下面这些就是获取其对应的值
 func (self *CodeAttribute) MaxStack() uint {
 	return uint(self.maxStack)

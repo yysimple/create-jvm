@@ -45,6 +45,8 @@ type Class struct {
 	initStarted bool
 	// 类类型-通过jClass字段，每个Class结构体实例都与一个类对象关联
 	jClass *Object
+	// 属性信息
+	sourceFile string
 }
 
 // newClass // 把ClassFile格式的数据转换成 class结构
@@ -57,6 +59,7 @@ func newClass(cf *classfile.ClassFile) *Class {
 	class.rtConstantPool = newConstantPool(class, cf.ConstantPool())
 	class.fields = newFields(class, cf.Fields())
 	class.methods = newMethods(class, cf.Methods())
+	class.sourceFile = getSourceFile(cf)
 	return class
 }
 
@@ -134,6 +137,13 @@ func (self *Class) getStaticMethod(name, descriptor string) *Method {
 	return nil
 }
 
+func getSourceFile(cf *classfile.ClassFile) string {
+	if sfAttr := cf.SourceFileAttribute(); sfAttr != nil {
+		return sfAttr.FileName()
+	}
+	return "Unknown" // todo
+}
+
 // GetClinitMethod 这是获取到静态方法初始化信息
 func (self *Class) GetClinitMethod() *Method {
 	return self.getStaticMethod("<clinit>", "()V")
@@ -162,6 +172,10 @@ func (self *Class) InitStarted() bool {
 
 func (self *Class) StartInit() {
 	self.initStarted = true
+}
+
+func (self *Class) SourceFile() string {
+	return self.sourceFile
 }
 
 // 下面都是判断是否是指定的方法

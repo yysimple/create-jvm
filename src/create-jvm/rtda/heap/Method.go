@@ -10,8 +10,12 @@ type Method struct {
 	maxLocals uint
 	// 字节码指令操作
 	code []byte
+	// 异常表信息
+	exceptionTable ExceptionTable
 	// 记录该方法有多少个参数
 	argSlotCount uint
+	// 方法执行的行号
+	lineNumberTable *classfile.LineNumberTableAttribute
 }
 
 // 初始化一个方法信息，也是从classFile转换过来
@@ -79,6 +83,9 @@ func (self *Method) copyAttributes(cfMethod *classfile.MemberInfo) {
 		self.maxStack = codeAttr.MaxStack()
 		self.maxLocals = codeAttr.MaxLocals()
 		self.code = codeAttr.Code()
+		self.lineNumberTable = codeAttr.LineNumberTableAttribute()
+		self.exceptionTable = newExceptionTable(codeAttr.ExceptionTable(),
+			self.class.rtConstantPool)
 	}
 }
 
@@ -114,4 +121,24 @@ func (self *Method) Code() []byte {
 
 func (self *Method) ArgSlotCount() uint {
 	return self.argSlotCount
+}
+
+// FindExceptionHandler
+// FindExceptionHandler()方法调用ExceptionTable.findExceptionHandler()方法搜索异常处理表，如果能够找到对应的异常处理项，则返回它的handlerPc字段，否则返回-1
+func (self *Method) FindExceptionHandler(exClass *Class, pc int) int {
+	handler := self.exceptionTable.findExceptionHandler(exClass, pc)
+	if handler != nil {
+		return handler.handlerPc
+	}
+	return -1
+}
+
+func (self *Method) GetLineNumber(pc int) int {
+	if self.IsNative() {
+		return -2
+	}
+	if self.lineNumberTable == nil {
+		return -1
+	}
+	return self.lineNumberTable.GetLineNumber(pc)
 }

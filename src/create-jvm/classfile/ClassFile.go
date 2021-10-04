@@ -155,3 +155,14 @@ func (self *ClassFile) InterfaceNames() []string {
 	}
 	return interfaceNames
 }
+
+// SourceFileAttribute 注意，并不是每个class文件中都有源文件信息，这个因编译时的编译器选项而异
+func (self *ClassFile) SourceFileAttribute() *SourceFileAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *SourceFileAttribute:
+			return attrInfo.(*SourceFileAttribute)
+		}
+	}
+	return nil
+}

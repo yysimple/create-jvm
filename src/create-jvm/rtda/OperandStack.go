@@ -102,3 +102,11 @@ func (self *OperandStack) PushBoolean(val bool) {
 func (self *OperandStack) PopBoolean() bool {
 	return self.PopInt() == 1
 }
+
+// Clear 这里是将操作数栈也清空
+func (self *OperandStack) Clear() {
+	self.size = 0
+	for i := range self.slots {
+		self.slots[i].ref = nil
+	}
+}
