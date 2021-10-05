@@ -10,7 +10,6 @@ import (
 // 普通的方法调用
 type INVOKE_VIRTUAL struct{ base.Index16Instruction }
 
-// Execute 这里的实现跟前面的 Invokespecial 的实现是差不多的
 func (self *INVOKE_VIRTUAL) Execute(frame *rtda.Frame) {
 	currentClass := frame.Method().Class()
 	cp := currentClass.RtConstantPool()

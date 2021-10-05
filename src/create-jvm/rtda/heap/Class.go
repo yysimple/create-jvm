@@ -158,6 +158,10 @@ func (self *Class) AccessFlags() uint16 {
 	return self.accessFlags
 }
 
+func (self *Class) Interfaces() []*Class {
+	return self.interfaces
+}
+
 func (self *Class) Name() string {
 	return self.name
 }
