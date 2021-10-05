@@ -15,7 +15,7 @@ func InitClass(thread *rtda.Thread, class *heap.Class) {
 // 初始化静态方法
 func scheduleClinit(thread *rtda.Thread, class *heap.Class) {
 	clinit := class.GetClinitMethod()
-	if clinit != nil {
+	if clinit != nil && clinit.Class() == class {
 		// exec <clinit>
 		newFrame := thread.NewFrame(clinit)
 		thread.PushFrame(newFrame)
